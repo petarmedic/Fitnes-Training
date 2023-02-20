@@ -1,0 +1,152 @@
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+## Mutation -> promena na podacima (dodavanje, edit, brisanje)
+type Mutation {
+    register(name: String!,dateBirth: String!, adress: String!, password: String!, lastName: String!, username: String!, phoneNumber: String!, email: String!) : Boolean!
+    deleteUser(id: ID!): Boolean
+}
+## citanje podataka
+type Query {
+    login(username: String!, password: String!): LoggedInUser
+    userById(id: ID!): User
+    allUsers: [User]
+    profil: User
+    allTrenings: [Training]
+    treningById(id: ID!): Training
+}
+
+type User{
+    id: ID!,
+    adress: String,
+    phoneNumber: String,
+    dateRegister: String,
+    dateBirth: String,
+    email: String,
+    name: String,
+    username: String,
+    lastName: String,
+    role: String,
+    comments: [Comment],
+    loyaltyCard: LoyaltyCard,
+    reservations: [Reservation],
+    wishs: [Wish]
+}
+
+type Training{
+    id: ID!
+    prices: Int,
+    name: String!
+    levelTraining: String,
+    description: String,
+    photo: String,
+    trainingDuration: Int,
+    trainer: String,
+    trainingKind: String,
+    comments: [Comment],
+    trainingSchedules: [TrainingSchedule]
+    trainingType: [TrainingTypes],
+    wishs: [Wish]
+}
+type Wish {
+    id: ID!,
+    user: User,
+    training: Training
+}
+type WorkoutRoom {
+    id: ID!
+    capacity: Int,
+    name: String,
+    trainingSchedule: [TrainingSchedule],
+
+}
+
+type TrainingSchedule{
+    id: ID!,
+    dateTime: String,
+    reservations: [Reservation],
+    workoutRoom: WorkoutRoom,
+    training: Training
+
+}
+type Reservation {
+    id: ID!
+    confirmation: Boolean,
+    user: User,
+    trainingSchedule: TrainingSchedule
+}
+
+type PurchasedTraining{
+    id: ID!
+    user: User
+    trainingSchedule: TrainingSchedule
+}
+
+type LoyaltyCard{
+    id: ID!
+    point: Int,
+    discount: Int,
+}
+type LoggedInUser {
+    id: ID!
+    token: String,
+    username: String,
+    email: String,
+    authorities: [String]
+}
+
+type Comment{
+    id: ID!
+    anonymous: Boolean!,
+    rate: Int!,
+    text: String!,
+    datePost: String,
+    user: User,
+    statusComments: StatusComment,
+    training: Training,
+    active: Boolean
+}
+
+type StatusComment {
+    id: ID!
+    name: String!,
+    comments: [Comment]
+}
+
+type TrainingTypes {
+    id: ID!
+    name: String,
+    description: String,
+    trainings: [Training]
+}
+
+enum Role{
+    USER
+    ADMINISTRATOR
+    INSTRUCTOR
+    UNREGISTERED
+}
+
+
+#mutation {
+#    addUser(user: {username: "pera", password: "123", email: "pera@gmail.com", name: "Petar", lastName: "medic", adress: "adress", phoneNumber: "4556", role: USER, dateRegister: "2022-03-04", active: true})
+#    {
+#        id
+#    }
+#
+#    deleteUser(id: 12)
+#}
+#query {
+#
+#    userById(id: 1){
+#        id
+#        name
+#        email
+#    }
+#
+#    allUsers{
+#        id
+#        name
+#    }
