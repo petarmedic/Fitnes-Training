@@ -6,16 +6,21 @@ schema {
 ## Mutation -> promena na podacima (dodavanje, edit, brisanje)
 type Mutation {
     register(name: String!,dateBirth: String!, adress: String!, password: String!, lastName: String!, username: String!, phoneNumber: String!, email: String!) : Boolean!
-    deleteUser(id: ID!): Boolean
+    deleteUser(idUser: ID!): Boolean
+    editUser(idUser: Int!, name: String!, lastName: String!, email: String!, adress: String!, phoneNumber: String!, dateBirth: String!, username: String!): Boolean!
+    createWorkoutRoom(capacity: Int!, name: String!): Boolean!
+    deleteWorkoutRoom(idWorkoutRoom: Int!): Boolean!
+    createTraining(prices: Int!, levelTraining: String!, trainingDuration: Int!, trainer: String!, trainingKind: String!, description: String!, name: String!, photo: String): Boolean!
 }
 ## citanje podataka
 type Query {
     login(username: String!, password: String!): LoggedInUser
-    userById(id: ID!): User
+    user(idUser: Int!): User
     allUsers: [User]
     profil: User
-    allTrenings: [Training]
-    treningById(id: ID!): Training
+    trainings(filter: String, priceFrom: Int, priceTo: Int, sort: String): [Training]
+    treningById(id: Int!): Training
+
 }
 
 type User{

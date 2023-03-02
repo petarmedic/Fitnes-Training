@@ -10,5 +10,10 @@ public interface UserService {
     List<User> getAllUsers();
     boolean register(String name, String dateBirth, String adress, String password, String lastName, String username, String phoneNumber, String email) throws Exception;
 
+    User user(int idUser);
+
+    Boolean editUser(int idUser, String name, String lastName, String email, String adress, String phoneNumber, String dateBirth, String username);
+
+    Boolean deleteUser(int idUser);
 
 }

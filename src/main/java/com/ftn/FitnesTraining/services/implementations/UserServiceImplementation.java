@@ -6,14 +6,16 @@ import com.ftn.FitnesTraining.repositorys.LoyaltyCardRepository;
 import com.ftn.FitnesTraining.repositorys.UserRepository;
 import com.ftn.FitnesTraining.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.stereotype.Service;
 import com.ftn.FitnesTraining.security.SecurityConfiguration;
-
+import java.time.LocalDateTime;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImplementation implements UserService {
@@ -49,6 +51,8 @@ public class UserServiceImplementation implements UserService {
         user.setLoyaltyCard(ly);
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date dateOfBirth = format.parse(dateBirth);
+        LocalDateTime localDateTime = LocalDateTime.now();
+        Date dateOfRegistration = format.parse(String.valueOf(localDateTime));
         user.setAdress(adress);
         user.setLastName(lastName);
         user.setName(name);
@@ -56,11 +60,39 @@ public class UserServiceImplementation implements UserService {
         user.setPhoneNumber(phoneNumber);
         user.setPassword(configuration.passwordEncoder().encode(password));
         Date dateRegister = new Date();
-        user.setDateRegister(dateRegister);
+        user.setDateRegister(dateOfRegistration);
         user.setEmail(email);
-        user.setDateRegister(dateOfBirth);
+        user.setDateBirth(dateOfBirth);
         user.setRole("USER");
         userRepository.save(user);
+        return true;
+    }
+
+    @Override
+    public User user(int idUser) {
+        return userRepository.findById(idUser).get();
+    }
+
+    @Override
+    public Boolean editUser(int idUser, String name, String lastName, String email, String adress, String phoneNumber, String dateBirth, String username) {
+        Optional<User> tOpt = userRepository.findById(idUser);
+        if (tOpt.isPresent()) {
+            User u = tOpt.get();
+            u.setName(name);
+            u.setLastName(lastName);
+            u.setEmail(email);
+            u.setAdress(adress);
+            u.setPhoneNumber(phoneNumber);
+            u.setUsername(username);
+
+            userRepository.save(u);
+        }
+        return false;
+    }
+
+    @Override
+    public Boolean deleteUser(int idUser) {
+        userRepository.deleteById(idUser);
         return true;
     }
 }

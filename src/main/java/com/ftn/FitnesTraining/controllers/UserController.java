@@ -6,6 +6,7 @@ import com.ftn.FitnesTraining.services.UserService;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import com.ftn.FitnesTraining.security.TokenUtils;
 
@@ -68,4 +69,21 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @QueryMapping
+    public User user(@Argument int idUser) {
+        return userService.user(idUser);
+    }
+
+    @MutationMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public Boolean editUser(@Argument int idUser, @Argument String name, @Argument String lastName, @Argument String email, @Argument String adress, @Argument String phoneNumber, @Argument String dateBirth, @Argument String username){
+        return userService.editUser(idUser, name, lastName, email, adress, phoneNumber, dateBirth, username);
+    }
+
+    @MutationMapping
+//    @PreAuthorize("hasAuthority('ADMIN')")
+    public Boolean deleteUser(@Argument int idUser){
+
+        return userService.deleteUser(idUser);
+    }
 }
