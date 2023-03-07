@@ -24,7 +24,7 @@ public class Comment implements Serializable {
 	private String text;
 	@Column(name = "date_post")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateTime;
+	private Date datePost;
 
 	//bi-directional many-to-one association to Korisnik
 	@ManyToOne
@@ -75,11 +75,11 @@ public class Comment implements Serializable {
 	}
 
 	public Date getDateTime() {
-		return this.dateTime;
+		return this.datePost;
 	}
 
 	public void setDateTime(Date dateTime) {
-		this.dateTime = dateTime;
+		this.datePost = dateTime;
 	}
 
 	public User getKorisnik() {

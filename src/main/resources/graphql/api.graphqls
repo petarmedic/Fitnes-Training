@@ -11,16 +11,22 @@ type Mutation {
     createWorkoutRoom(capacity: Int!, name: String!): Boolean!
     deleteWorkoutRoom(idWorkoutRoom: Int!): Boolean!
     createTraining(prices: Int!, levelTraining: String!, trainingDuration: Int!, trainer: String!, trainingKind: String!, description: String!, name: String!, photo: String): Boolean!
+    editTraining(idTraining: Int!, prices: Int!, levelTraining: String!, trainingDuration: Int!, trainer: String!, trainingKind: String!, description: String!, name: String!, photo: String): Boolean!
+    createTrainingSchedule(trainingId: Int!, workoutRoomId: Int!, dateTime: String!): Boolean!
+    createComment(idTraining: Int!, rate: Int!, anonymous: String!, text: String!) : Boolean!
+    processComment(idComment: Int!, approved: Boolean!): Boolean!
 }
 ## citanje podataka
 type Query {
     login(username: String!, password: String!): LoggedInUser
     user(idUser: Int!): User
+    workoutRooms: [WorkoutRoom]
     allUsers: [User]
     profil: User
     trainings(filter: String, priceFrom: Int, priceTo: Int, sort: String): [Training]
-    treningById(id: Int!): Training
-
+    training(idTraining: Int!): Training
+    commentForTraining(idTraining: Int): [Comment]
+    commentForApproval: [Comment]
 }
 
 type User{
@@ -111,7 +117,6 @@ type Comment{
     user: User,
     statusComments: StatusComment,
     training: Training,
-    active: Boolean
 }
 
 type StatusComment {

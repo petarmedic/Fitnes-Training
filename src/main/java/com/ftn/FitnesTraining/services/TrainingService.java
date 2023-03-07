@@ -8,5 +8,9 @@ import java.util.List;
 public interface TrainingService {
     List<Training> trainings(@Argument String filter, @Argument int priceFrom, @Argument int priceTo, @Argument String sort);
 
+    Training training(int idTraining);
     Boolean createTraining( int prices,  String levelTraining,  int trainingDuration,  String trainer,  String trainingKind,  String description,  String name,  String photo);
+
+    Boolean editTraining(int idTraining, int prices, String levelTraining, int trainingDuration, String trainer, String trainingKind, String description, String name, String photo);
+    Boolean createTrainingSchedule( int trainingId,  int workoutRoomId,  String dateTime);
 }

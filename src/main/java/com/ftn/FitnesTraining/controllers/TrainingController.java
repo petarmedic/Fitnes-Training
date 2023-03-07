@@ -23,9 +23,25 @@ public class TrainingController {
         return trainingService.createTraining(prices, levelTraining, trainingDuration, trainer, trainingKind, description, name, photo);
     }
 
+    @MutationMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public Boolean editTraining(@Argument int idTraining, @Argument int prices, @Argument String levelTraining, @Argument int trainingDuration, @Argument String trainer, @Argument String trainingKind, @Argument String description, @Argument String name, @Argument String photo){
+        return trainingService.editTraining(idTraining, prices, levelTraining, trainingDuration, trainer, trainingKind, description, name, photo);
+    }
+
     @QueryMapping
     public List<Training> trainings(@Argument String filter, @Argument int priceFrom, @Argument int priceTo, @Argument String sort) {
         return trainingService.trainings(filter, priceFrom, priceTo, sort);
         
+    }
+    @QueryMapping
+    public Training training(@Argument int idTraining) {
+        return trainingService.training(idTraining);
+    }
+
+    @MutationMapping
+//    @PreAuthorize("hasAuthority('ADMIN')")
+    public Boolean createTrainingSchedule(@Argument int trainingId, @Argument int workoutRoomId, @Argument String dateTime){
+        return trainingService.createTrainingSchedule(trainingId, workoutRoomId, dateTime);
     }
 }
