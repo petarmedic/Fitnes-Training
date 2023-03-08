@@ -15,6 +15,9 @@ type Mutation {
     createTrainingSchedule(trainingId: Int!, workoutRoomId: Int!, dateTime: String!): Boolean!
     createComment(idTraining: Int!, rate: Int!, anonymous: String!, text: String!) : Boolean!
     processComment(idComment: Int!, approved: Boolean!): Boolean!
+    shoppingCart(idTrainingSchedule: Int!, numberPoint: Int!): Boolean!
+    processShoppingCart(accepted: Boolean!):Boolean!
+
 }
 ## citanje podataka
 type Query {
@@ -27,6 +30,7 @@ type Query {
     training(idTraining: Int!): Training
     commentForTraining(idTraining: Int): [Comment]
     commentForApproval: [Comment]
+    viewReservation(shoppingCart: Boolean): [Reservation]
 }
 
 type User{
