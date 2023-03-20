@@ -73,7 +73,7 @@ public class ReservationServiceImplementation implements ReservationService {
                 }
             }
 
-            if (totr.getRezervacijas().size() >= totr.getWorkoutRoom().getCapacity()) {
+            if (totr.getReservations().size() >= totr.getWorkoutRoom().getCapacity()) {
                 return false;
             }
 
@@ -102,7 +102,6 @@ public class ReservationServiceImplementation implements ReservationService {
         User user = userRepository.findByUsernameOrEmail(name, name);
         List<Reservation> rezervacijaList = getReservationForUser(user);
         for (Reservation reservation : rezervacijaList) {
-            System.out.println("Da li udje ovde");
               if(reservation.getConfirmation() == (byte) 0) continue;
             if (accepted) {
                 reservation.setConfirmation((byte) 1);

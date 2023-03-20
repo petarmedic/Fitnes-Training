@@ -1,8 +1,10 @@
 package com.ftn.FitnesTraining.services.implementations;
 
+import com.ftn.FitnesTraining.dto.StatisticsDTO;
 import com.ftn.FitnesTraining.models.Training;
 import com.ftn.FitnesTraining.models.TrainingSchedule;
 import com.ftn.FitnesTraining.models.WorkoutRoom;
+import com.ftn.FitnesTraining.repositorys.ReservationRepository;
 import com.ftn.FitnesTraining.repositorys.TrainingRepository;
 import com.ftn.FitnesTraining.repositorys.TrainingScheduleRepository;
 import com.ftn.FitnesTraining.repositorys.WorkoutRoomRepository;
@@ -12,13 +14,12 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class TrainingServiceImplementation implements TrainingService {
@@ -35,6 +36,8 @@ public class TrainingServiceImplementation implements TrainingService {
     WorkoutRoomRepository workoutRoomRepository;
     @PersistenceContext
     private EntityManager em;
+    @Autowired
+    private ReservationRepository reservationRepository;
 
     @Override
     public Boolean createTraining( int prices,  String levelTraining,  int trainingDuration,  String trainer,  String trainingKind,  String description,  String name,  String photo) {
@@ -148,5 +151,38 @@ public class TrainingServiceImplementation implements TrainingService {
         trainingScheduleRepository.save(totr);
         return true;
     }
+
+
+    @Override
+    public List<StatisticsDTO> statistics(String datumOd, String datumDo) {
+        List<StatisticsDTO> statistika = new ArrayList<>();
+        List<Training> treningList = trainingRepository.findAll();
+        treningList.forEach(tr -> {
+            AtomicInteger brojZakazivanja = new AtomicInteger();
+            tr.getTrainingSchedules().forEach(termin -> {
+                if (!datumDo.isBlank() && !datumDo.isBlank()) {
+                    try {
+                        Date datumOdDate = new SimpleDateFormat("yyyy-MM-dd").parse(datumOd);
+                        Date datumDoDate = new SimpleDateFormat("yyyy-MM-dd").parse(datumDo);
+                        if (termin.getDateTime().after(datumOdDate) && termin.getDateTime().before(datumDoDate)) {
+                            brojZakazivanja.set((int) termin.getReservations().stream().filter(rezervacija -> rezervacija.getConfirmation() == (byte) 1).count());
+                        }
+                    } catch (Exception ignored) {
+                    }
+                } else {
+                    brojZakazivanja.set((int) termin.getReservations().stream().filter(rezervacija -> rezervacija.getConfirmation() == (byte) 1).count());
+                    System.out.println(brojZakazivanja + " BROJ ZAKAZIVANJA");
+                }
+                int earnings = tr.getPrices() * brojZakazivanja.get();
+                System.out.println(earnings + " ZARADA ++++++++");
+                System.out.println(brojZakazivanja + " BROJ ZAKAZIVANJA ++++++++");
+                StatisticsDTO s = new StatisticsDTO(tr.getId(), brojZakazivanja.get(), earnings, tr.getTrainer(), tr.getName());
+                statistika.add(s);
+            });
+
+        });
+        return statistika;
+    }
+
 
 }

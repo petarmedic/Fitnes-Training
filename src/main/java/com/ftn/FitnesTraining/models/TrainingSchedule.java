@@ -51,23 +51,19 @@ public class TrainingSchedule implements Serializable {
 		this.dateTime = dateTime;
 	}
 
-	public List<Reservation> getRezervacijas() {
-		return this.reservations;
-	}
-
-	public void setRezervacijas(List<Reservation> reservations) {
-		this.reservations = reservations;
+	public List<Reservation> getReservations() {
+		return reservations;
 	}
 
 	public Reservation addRezervacija(Reservation reservation) {
-		getRezervacijas().add(reservation);
+		getReservations().add(reservation);
 		reservation.setTrainingSchedule(this);
 
 		return reservation;
 	}
 
 	public Reservation removeRezervacija(Reservation reservation) {
-		getRezervacijas().remove(reservation);
+		getReservations().remove(reservation);
 		reservation.setTrainingSchedule(null);
 
 		return reservation;
@@ -89,4 +85,14 @@ public class TrainingSchedule implements Serializable {
 		this.training = training;
 	}
 
+	@Override
+	public String toString() {
+		return "TrainingSchedule{" +
+				"id=" + id +
+				", dateTime=" + dateTime +
+				", reservations=" + reservations +
+				", workoutRoom=" + workoutRoom +
+				", training=" + training +
+				'}';
+	}
 }

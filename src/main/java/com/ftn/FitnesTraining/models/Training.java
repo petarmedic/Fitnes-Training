@@ -161,8 +161,8 @@ public class Training implements Serializable {
 		return comment;
 	}
 
-	public List<TrainingSchedule> getTerminOdrzavanjaTreningas() {
-		return this.trainingSchedules;
+	public List<TrainingSchedule> getTrainingSchedules() {
+		return trainingSchedules;
 	}
 
 	public void setTerminOdrzavanjaTreningas(List<TrainingSchedule> terminOdrzavanjaTreningases) {
@@ -170,14 +170,14 @@ public class Training implements Serializable {
 	}
 
 	public TrainingSchedule addTerminOdrzavanjaTreninga(TrainingSchedule trainingSchedule) {
-		getTerminOdrzavanjaTreningas().add(trainingSchedule);
+		getTrainingSchedules().add(trainingSchedule);
 		trainingSchedule.setTrening(this);
 
 		return trainingSchedule;
 	}
 
 	public TrainingSchedule removeTerminOdrzavanjaTreninga(TrainingSchedule trainingSchedule) {
-		getTerminOdrzavanjaTreningas().remove(trainingSchedule);
+		getTrainingSchedules().remove(trainingSchedule);
 		trainingSchedule.setTrening(null);
 
 		return trainingSchedule;

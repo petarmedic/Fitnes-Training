@@ -1,5 +1,6 @@
 package com.ftn.FitnesTraining.controllers;
 
+import com.ftn.FitnesTraining.dto.StatisticsDTO;
 import com.ftn.FitnesTraining.models.Training;
 import com.ftn.FitnesTraining.services.TrainingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,5 +44,10 @@ public class TrainingController {
 //    @PreAuthorize("hasAuthority('ADMIN')")
     public Boolean createTrainingSchedule(@Argument int trainingId, @Argument int workoutRoomId, @Argument String dateTime){
         return trainingService.createTrainingSchedule(trainingId, workoutRoomId, dateTime);
+    }
+
+    @QueryMapping
+    public List<StatisticsDTO> statistics(@Argument String dateFrom, @Argument String dateTo) {
+        return trainingService.statistics(dateFrom, dateTo);
     }
 }
