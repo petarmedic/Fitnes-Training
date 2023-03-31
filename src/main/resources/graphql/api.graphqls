@@ -5,7 +5,6 @@ schema {
 }
 ## Mutation -> promena na podacima (dodavanje, edit, brisanje)
 type Mutation {
-    register(name: String!,dateBirth: String!, adress: String!, password: String!, lastName: String!, username: String!, phoneNumber: String!, email: String!) : Boolean!
     deleteUser(idUser: ID!): Boolean
     editUser(idUser: Int!, name: String!, lastName: String!, email: String!, adress: String!, phoneNumber: String!, dateBirth: String!, username: String!): Boolean!
     createWorkoutRoom(capacity: Int!, name: String!): Boolean!
@@ -17,6 +16,7 @@ type Mutation {
     processComment(idComment: Int!, approved: Boolean!): Boolean!
     shoppingCart(idTrainingSchedule: Int!, numberPoint: Int!): Boolean!
     processShoppingCart(accepted: Boolean!):Boolean!
+    processCard(process: Boolean!, idUser: Int!): Boolean!
 
 }
 ## citanje podataka
@@ -26,12 +26,14 @@ type Query {
     workoutRooms: [WorkoutRoom]
     allUsers: [User]
     profil: User
-    trainings(filter: String, priceFrom: Int, priceTo: Int, sort: String): [Training]
+    trainings( priceFrom: Int, priceTo: Int): [Training]
     training(idTraining: Int!): Training
     commentForTraining(idTraining: Int): [Comment]
     commentForApproval: [Comment]
     viewReservation(shoppingCart: Boolean): [Reservation]
     statistics(dateFrom: String, dateTo: String): [Statistics]
+    requestCard: Message!
+    requestForCard: [User]
 }
 
 type User{
@@ -71,6 +73,11 @@ type Wish {
     user: User,
     training: Training
 }
+
+type Message {
+    message: String
+}
+
 type WorkoutRoom {
     id: ID!
     capacity: Int,
@@ -90,6 +97,7 @@ type TrainingSchedule{
 type Reservation {
     id: ID!
     confirmation: Boolean,
+    point: Int
     user: User,
     trainingSchedule: TrainingSchedule
 }

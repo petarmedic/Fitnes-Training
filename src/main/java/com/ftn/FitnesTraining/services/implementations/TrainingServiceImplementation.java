@@ -73,40 +73,27 @@ public class TrainingServiceImplementation implements TrainingService {
     }
 
     @Override
-    public List<Training> trainings(String filter, int priceFrom, int priceTo, String sort) {
+    public List<Training> trainings( int priceFrom, int priceTo) {
+
+        if (Objects.equals(priceFrom, null) || Objects.equals(priceTo, null) || priceFrom == 0 && priceTo == 0) {
+            // dodeli vrednost 0
+            priceFrom = 0;
+            priceTo = 0;
+        }
 
         StringBuilder whereBuilder = new StringBuilder();
         boolean missingWhere = true;
-        if (Objects.nonNull(filter) && !filter.isBlank()) {
-            missingWhere = false;
-            whereBuilder.append(" WHERE (tr.name like '%").append(filter).append("%'");
-            whereBuilder.append(" OR tr.description like '%").append(filter).append("%'");
-            whereBuilder.append(" OR tr.trainer like '%").append(filter).append("%')");
-        }
-        if (priceFrom > 0) {
+
+        if (priceFrom != 0 || priceTo != 0) {
             if (missingWhere) {
                 whereBuilder.append(" WHERE");
             } else {
                 whereBuilder.append(" AND");
             }
-            whereBuilder.append(" tr.prices > ").append(priceFrom);
+            whereBuilder.append(" tr.prices > ").append(priceFrom).append(" AND tr.prices < ").append(priceTo);
         }
 
-        if (priceTo > 0) {
-            if (missingWhere) {
-                whereBuilder.append(" WHERE");
-            } else {
-                whereBuilder.append(" AND");
-            }
-            whereBuilder.append(" tr.prices < ").append(priceTo);
-        }
-        String where = whereBuilder.toString();
-        String order = "";
-        if (Objects.nonNull(sort) && !sort.isBlank()) {
-            order = String.format(" order by tr.%s", sort);
-        }
-
-        String query = String.format("SELECT tr FROM Training tr%s%s", where, order);
+        String query = String.format("SELECT tr FROM Training tr%s", whereBuilder.toString());
         return em.createQuery(query).getResultList();
     }
     @Override
@@ -160,8 +147,10 @@ public class TrainingServiceImplementation implements TrainingService {
         treningList.forEach(tr -> {
             AtomicInteger brojZakazivanja = new AtomicInteger();
             tr.getTrainingSchedules().forEach(termin -> {
+
                 if (!datumDo.isBlank() && !datumDo.isBlank()) {
                     try {
+
                         Date datumOdDate = new SimpleDateFormat("yyyy-MM-dd").parse(datumOd);
                         Date datumDoDate = new SimpleDateFormat("yyyy-MM-dd").parse(datumDo);
                         if (termin.getDateTime().after(datumOdDate) && termin.getDateTime().before(datumDoDate)) {
@@ -171,12 +160,12 @@ public class TrainingServiceImplementation implements TrainingService {
                     }
                 } else {
                     brojZakazivanja.set((int) termin.getReservations().stream().filter(rezervacija -> rezervacija.getConfirmation() == (byte) 1).count());
-                    System.out.println(brojZakazivanja + " BROJ ZAKAZIVANJA");
+
                 }
                 int earnings = tr.getPrices() * brojZakazivanja.get();
-                System.out.println(earnings + " ZARADA ++++++++");
-                System.out.println(brojZakazivanja + " BROJ ZAKAZIVANJA ++++++++");
                 StatisticsDTO s = new StatisticsDTO(tr.getId(), brojZakazivanja.get(), earnings, tr.getTrainer(), tr.getName());
+       //         StatisticsDTO s = new StatisticsDTO(tr.getId(), brojZakazivanja.get(), earnings, tr.getTrainer(), tr.getName(), termin.getDateTime());
+                // add in constructor date
                 statistika.add(s);
             });
 

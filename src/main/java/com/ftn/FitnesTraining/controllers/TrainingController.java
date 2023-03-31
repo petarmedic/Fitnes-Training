@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 public class TrainingController {
@@ -31,8 +32,13 @@ public class TrainingController {
     }
 
     @QueryMapping
-    public List<Training> trainings(@Argument String filter, @Argument int priceFrom, @Argument int priceTo, @Argument String sort) {
-        return trainingService.trainings(filter, priceFrom, priceTo, sort);
+    public List<Training> trainings(@Argument int priceFrom, @Argument int priceTo) {
+        if (Objects.equals(priceFrom, null) || Objects.equals(priceTo, null) || priceFrom == 0 && priceTo == 0) {
+            // dodeli vrednost 0
+            priceFrom = 0;
+            priceTo = 0;
+        }
+        return trainingService.trainings(priceFrom, priceTo);
         
     }
     @QueryMapping

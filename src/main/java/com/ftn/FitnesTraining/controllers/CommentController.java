@@ -29,7 +29,7 @@ public class CommentController {
     }
 
     @QueryMapping
- //   @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<Comment> commentForApproval() {
         return commentService.commentForApproval();
     }

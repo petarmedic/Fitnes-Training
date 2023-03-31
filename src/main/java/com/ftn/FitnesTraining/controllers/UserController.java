@@ -1,6 +1,7 @@
 package com.ftn.FitnesTraining.controllers;
 
 import com.ftn.FitnesTraining.dto.LoggedInUserDTO;
+import com.ftn.FitnesTraining.dto.MessageDTO;
 import com.ftn.FitnesTraining.models.User;
 import com.ftn.FitnesTraining.services.UserService;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -81,9 +82,26 @@ public class UserController {
     }
 
     @MutationMapping
-//    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Boolean deleteUser(@Argument int idUser){
 
         return userService.deleteUser(idUser);
     }
+
+    @PreAuthorize("hasAuthority('USER')")
+    @QueryMapping
+    public MessageDTO requestCard(Principal principal) {
+        return userService.requestCard(principal.getName()) ? new MessageDTO("Successfully") : new MessageDTO("You already have a card or have already sent a request");
+    }
+    @PreAuthorize("hasAuthority('ADMIN')")
+    @QueryMapping
+    public List<User> requestForCard(){
+        return userService.requestForCard();
+    }
+
+    @MutationMapping
+    public Boolean processCard(@Argument boolean process, @Argument int idUser){
+        return userService.processCard(process, idUser);
+    }
+
 }

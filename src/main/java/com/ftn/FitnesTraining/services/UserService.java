@@ -16,4 +16,10 @@ public interface UserService {
 
     Boolean deleteUser(int idUser);
 
+    Boolean requestCard(String name);
+
+    List<User> requestForCard();
+
+    Boolean processCard(boolean process, int idUser);
+
 }

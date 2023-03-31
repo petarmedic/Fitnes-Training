@@ -16,14 +16,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImplementation implements UserService {
 
     private static final int Initial_Number_Point = -10;
-    private static final int Number_Points_Request = -9;
-    private static final int BROJ_POENA_ZAHTEV_ODBIJEN = -8;
-    private static final int BROJ_POENA_ZAHTEV_PRIHVACEN= 0;
+    private static final int NUMBER_POINT_REQUEST = -9;
+    private static final int NUMBER_POINT_REQUEST_REJECT = -8;
+    private static final int NUMBER_POINT_REQUEST_ACCEPT= 10;
 
     @Autowired
     UserRepository userRepository;
@@ -95,4 +96,39 @@ public class UserServiceImplementation implements UserService {
         userRepository.deleteById(idUser);
         return true;
     }
+
+    @Override
+    public Boolean requestCard(String name) {
+        User korisnik = userRepository.findByUsernameOrEmail(name, name);
+        LoyaltyCard ck = korisnik.getLoyaltyCard();
+
+        if(ck.getPoint() == Initial_Number_Point || ck.getPoint() == NUMBER_POINT_REQUEST_REJECT){
+            ck.setPoint(NUMBER_POINT_REQUEST);
+            loyaltyCardRepository.save(ck);
+            System.out.println("SACUVA");
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    @Override
+    public List<User> requestForCard() {
+        List<User> users = userRepository.findAll();
+        return users.stream().filter(korisnik -> korisnik.getLoyaltyCard().getPoint() == NUMBER_POINT_REQUEST).collect(Collectors.toList());
+    }
+
+    @Override
+    public Boolean processCard(boolean process, int idUser) {
+        User k = userRepository.getReferenceById(idUser);
+        LoyaltyCard ck = k.getLoyaltyCard();
+        if(process){
+            ck.setPoint(NUMBER_POINT_REQUEST_ACCEPT);
+        }else{
+            ck.setPoint(NUMBER_POINT_REQUEST_REJECT);
+        }
+        loyaltyCardRepository.save(ck);
+        return true;
+    }
+
 }

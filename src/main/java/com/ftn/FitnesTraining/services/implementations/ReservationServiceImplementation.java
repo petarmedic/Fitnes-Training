@@ -102,13 +102,13 @@ public class ReservationServiceImplementation implements ReservationService {
         User user = userRepository.findByUsernameOrEmail(name, name);
         List<Reservation> rezervacijaList = getReservationForUser(user);
         for (Reservation reservation : rezervacijaList) {
-              if(reservation.getConfirmation() == (byte) 0) continue;
+            if(reservation.getConfirmation() == (byte) 1) continue;
             if (accepted) {
                 reservation.setConfirmation((byte) 1);
                 reservationRepository.save(reservation);
 
-                int prices  = reservation.getTrainingSchedule().getTrening().getPrices();
-                int brojBodvaNovih = prices / 500;
+                int cena  = reservation.getTrainingSchedule().getTrening().getPrices();
+                int brojBodvaNovih = cena / 500;
                 LoyaltyCard ck = user.getLoyaltyCard();
                 int brojStarihBodova = ck.getPoint();
                 int noviBodovi = brojStarihBodova + brojBodvaNovih;
