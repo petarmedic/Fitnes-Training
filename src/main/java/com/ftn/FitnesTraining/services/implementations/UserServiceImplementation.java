@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.stereotype.Service;
 import com.ftn.FitnesTraining.security.SecurityConfiguration;
+
+import java.text.ParseException;
 import java.time.LocalDateTime;
 
 import java.text.DateFormat;
@@ -35,8 +37,11 @@ public class UserServiceImplementation implements UserService {
     SecurityConfiguration configuration;
 
     @Override
-    public List<User> getAllUsers(){
-        return userRepository.findAll();
+    public List<User> getAllUsers() {
+        return userRepository.findAll().stream()
+                .filter(user -> Boolean.TRUE.equals(user.getActive()))
+                .collect(Collectors.toList());
+        // ako je u mysql 1 ili true
     }
     @Override
     public User findByUsernameOrEmail(String username, String email) {
@@ -57,7 +62,12 @@ public class UserServiceImplementation implements UserService {
         user.setAdress(adress);
         user.setLastName(lastName);
         user.setName(name);
-        user.setUsername(username);
+        Optional<User> user1 = userRepository.findByUsername(username);
+        if(user1.isPresent()){
+            return false;
+        }else{
+            user.setUsername(username);
+        }
         user.setPhoneNumber(phoneNumber);
         user.setPassword(configuration.passwordEncoder().encode(password));
         Date dateRegister = new Date();
@@ -65,6 +75,7 @@ public class UserServiceImplementation implements UserService {
         user.setEmail(email);
         user.setDateBirth(dateOfBirth);
         user.setRole("USER");
+        user.setActive(true);
         userRepository.save(user);
         return true;
     }
@@ -85,16 +96,31 @@ public class UserServiceImplementation implements UserService {
             u.setAdress(adress);
             u.setPhoneNumber(phoneNumber);
             u.setUsername(username);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            try{
+                Date birthDate = dateFormat.parse(dateBirth);
+                u.setDateBirth(birthDate);
+            }catch (ParseException e){
+                return false;
+            }
+
 
             userRepository.save(u);
         }
-        return false;
+        return true;
     }
 
     @Override
     public Boolean deleteUser(int idUser) {
-        userRepository.deleteById(idUser);
-        return true;
+        Optional<User> optionalUser = userRepository.findById(idUser);
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setActive(false);
+            userRepository.save(user);
+            return true; // vraća true samo ako je korisnik uspešno ažuriran
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -105,7 +131,6 @@ public class UserServiceImplementation implements UserService {
         if(ck.getPoint() == Initial_Number_Point || ck.getPoint() == NUMBER_POINT_REQUEST_REJECT){
             ck.setPoint(NUMBER_POINT_REQUEST);
             loyaltyCardRepository.save(ck);
-            System.out.println("SACUVA");
             return true;
         }else{
             return false;

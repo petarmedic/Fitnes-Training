@@ -5,7 +5,7 @@ schema {
 }
 ## Mutation -> promena na podacima (dodavanje, edit, brisanje)
 type Mutation {
-    deleteUser(idUser: ID!): Boolean
+    deleteUser(idUser: Int!): Boolean
     editUser(idUser: Int!, name: String!, lastName: String!, email: String!, adress: String!, phoneNumber: String!, dateBirth: String!, username: String!): Boolean!
     createWorkoutRoom(capacity: Int!, name: String!): Boolean!
     deleteWorkoutRoom(idWorkoutRoom: Int!): Boolean!
@@ -17,6 +17,8 @@ type Mutation {
     shoppingCart(idTrainingSchedule: Int!, numberPoint: Int!): Boolean!
     processShoppingCart(accepted: Boolean!):Boolean!
     processCard(process: Boolean!, idUser: Int!): Boolean!
+    deleteReservation(idReservation: Int!): Boolean!
+    register(name: String!,dateBirth: String!, adress: String!, password: String!, lastName: String!, username: String!, phoneNumber: String!, email: String!) : Boolean!
 
 }
 ## citanje podataka
@@ -158,6 +160,7 @@ type Statistics {
     earnings: Int,
     trainer: String,
     nameTraining: String
+    date: String
 }
 
 

@@ -13,4 +13,6 @@ public interface ReservationService {
     List<Reservation> viewReservation(boolean shoppingCart, String name);
 
     Boolean processShoppingCart(boolean accepted, String name);
+
+    Boolean deleteReservation(int idReservation);
 }

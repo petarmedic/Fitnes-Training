@@ -47,6 +47,9 @@ public class UserController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
         User user = userService.findByUsernameOrEmail(username, username);
+        if (!user.getActive()) {
+            return null;
+        }
         return new LoggedInUserDTO(user.getId(), tokenUtils.generateToken(userDetails),
                 user.getUsername(), userDetails.getUsername(), userDetails.getAuthorities());
     }
@@ -76,15 +79,14 @@ public class UserController {
     }
 
     @MutationMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    //@PreAuthorize("hasAuthority('ADMIN')")
     public Boolean editUser(@Argument int idUser, @Argument String name, @Argument String lastName, @Argument String email, @Argument String adress, @Argument String phoneNumber, @Argument String dateBirth, @Argument String username){
         return userService.editUser(idUser, name, lastName, email, adress, phoneNumber, dateBirth, username);
     }
 
     @MutationMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+   // @PreAuthorize("hasAuthority('ADMIN')")
     public Boolean deleteUser(@Argument int idUser){
-
         return userService.deleteUser(idUser);
     }
 

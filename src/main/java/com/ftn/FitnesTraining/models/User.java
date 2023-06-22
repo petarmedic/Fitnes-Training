@@ -60,6 +60,17 @@ public class User implements Serializable {
 	@OneToMany(mappedBy= "user")
 	private List<Wish> wishes;
 
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
+	@Column(name = "active")
+	private Boolean active;
+
 	public User() {
 	}
 
@@ -224,5 +235,6 @@ public class User implements Serializable {
 
 		return wish;
 	}
+
 
 }

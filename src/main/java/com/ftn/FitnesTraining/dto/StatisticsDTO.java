@@ -1,5 +1,7 @@
 package com.ftn.FitnesTraining.dto;
 
+import java.util.Date;
+
 public class StatisticsDTO {
 
     int idTraining;
@@ -8,12 +10,15 @@ public class StatisticsDTO {
     String trainer;
     String nameTraining;
 
-    public StatisticsDTO(int idTraining, int numberReservation, int earnings, String trainer, String nameTraining) {
+    Date date;
+
+    public StatisticsDTO(int idTraining, int numberReservation, int earnings, String trainer, String nameTraining, Date date) {
         this.idTraining = idTraining;
         this.numberReservation = numberReservation;
         this.earnings = earnings;
         this.trainer = trainer;
         this.nameTraining = nameTraining;
+        this.date = date;
     }
 
 

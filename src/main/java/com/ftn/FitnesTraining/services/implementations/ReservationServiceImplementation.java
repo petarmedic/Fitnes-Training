@@ -12,8 +12,10 @@ import com.ftn.FitnesTraining.services.ReservationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,16 +53,17 @@ public class ReservationServiceImplementation implements ReservationService {
         if (numberPoint != 0 && (numberPoint > 5 || numberPoint > ck.getPoint())) {
             return false;
         }
-
         if (trainingScheduleOptional.isPresent()) {
             TrainingSchedule totr = trainingScheduleOptional.get();
-
-
             LocalDateTime pocetakTotr = totr.getDateTime().toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDateTime();
             LocalDateTime krajTotr = pocetakTotr.plusMinutes(totr.getTrening().getTrainingDuration());
 
+            LocalDateTime currentDateTime = LocalDateTime.now();
+            if (currentDateTime.isAfter(pocetakTotr)) {
+                return false;
+            }
 
             List<Reservation> rezervacijaList = getReservationForUser(user);
             for (Reservation reservation : rezervacijaList) {
@@ -72,25 +75,21 @@ public class ReservationServiceImplementation implements ReservationService {
                     return false;
                 }
             }
-
             if (totr.getReservations().size() >= totr.getWorkoutRoom().getCapacity()) {
                 return false;
             }
-
             Reservation reservation = new Reservation();
             reservation.setConfirmation((byte) 0);
             reservation.setUser(user);
             reservation.setTrainingSchedule(totr);
             reservation.setPoint(numberPoint);
             reservationRepository.saveAndFlush(reservation);
-
             if(numberPoint!=0){
                 int stariBrojBodova = ck.getPoint();
                 int noviBrojBodova = stariBrojBodova - numberPoint;
                 ck.setPoint(noviBrojBodova);
                 loyaltyCardRepository.save(ck);
             }
-
             return true;
         }
         return false;
@@ -120,5 +119,14 @@ public class ReservationServiceImplementation implements ReservationService {
         }
         return true;
     }
+
+    @Override
+    public Boolean deleteReservation(int idReservation) {
+        reservationRepository.deleteById(idReservation);
+        return true;
+    }
+
+
+
 
 }

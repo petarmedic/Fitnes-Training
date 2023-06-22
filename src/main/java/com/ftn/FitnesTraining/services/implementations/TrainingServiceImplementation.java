@@ -90,7 +90,7 @@ public class TrainingServiceImplementation implements TrainingService {
             } else {
                 whereBuilder.append(" AND");
             }
-            whereBuilder.append(" tr.prices > ").append(priceFrom).append(" AND tr.prices < ").append(priceTo);
+            whereBuilder.append(" tr.prices >= ").append(priceFrom).append(" AND tr.prices <= ").append(priceTo);
         }
 
         String query = String.format("SELECT tr FROM Training tr%s", whereBuilder.toString());
@@ -148,27 +148,25 @@ public class TrainingServiceImplementation implements TrainingService {
             AtomicInteger brojZakazivanja = new AtomicInteger();
             tr.getTrainingSchedules().forEach(termin -> {
 
-                if (!datumDo.isBlank() && !datumDo.isBlank()) {
+                if (!datumOd.isBlank() && !datumDo.isBlank()) {
                     try {
-
                         Date datumOdDate = new SimpleDateFormat("yyyy-MM-dd").parse(datumOd);
                         Date datumDoDate = new SimpleDateFormat("yyyy-MM-dd").parse(datumDo);
                         if (termin.getDateTime().after(datumOdDate) && termin.getDateTime().before(datumDoDate)) {
-                            brojZakazivanja.set((int) termin.getReservations().stream().filter(rezervacija -> rezervacija.getConfirmation() == (byte) 1).count());
+                            brojZakazivanja.addAndGet((int) termin.getReservations().stream().filter(rezervacija -> rezervacija.getConfirmation() == (byte) 1).count());
+                            int earnings = tr.getPrices() * brojZakazivanja.get();
+                            StatisticsDTO s = new StatisticsDTO(tr.getId(), brojZakazivanja.get(), earnings, tr.getTrainer(), tr.getName(), termin.getDateTime());
+                            statistika.add(s);
                         }
                     } catch (Exception ignored) {
                     }
                 } else {
-                    brojZakazivanja.set((int) termin.getReservations().stream().filter(rezervacija -> rezervacija.getConfirmation() == (byte) 1).count());
-
+                    brojZakazivanja.addAndGet((int) termin.getReservations().stream().filter(rezervacija -> rezervacija.getConfirmation() == (byte) 1).count());
+                    int earnings = tr.getPrices() * brojZakazivanja.get();
+                    StatisticsDTO s = new StatisticsDTO(tr.getId(), brojZakazivanja.get(), earnings, tr.getTrainer(), tr.getName(), termin.getDateTime());
+                    statistika.add(s);
                 }
-                int earnings = tr.getPrices() * brojZakazivanja.get();
-                StatisticsDTO s = new StatisticsDTO(tr.getId(), brojZakazivanja.get(), earnings, tr.getTrainer(), tr.getName());
-       //         StatisticsDTO s = new StatisticsDTO(tr.getId(), brojZakazivanja.get(), earnings, tr.getTrainer(), tr.getName(), termin.getDateTime());
-                // add in constructor date
-                statistika.add(s);
             });
-
         });
         return statistika;
     }

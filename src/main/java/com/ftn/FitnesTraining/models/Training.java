@@ -64,6 +64,17 @@ public class Training implements Serializable {
 	@OneToMany(mappedBy= "training")
 	private List<Wish> wishes;
 
+	@Column(name = "active")
+	private Boolean active;
+
+	public Boolean getActive() {
+		return active;
+	}
+
+	public void setActive(Boolean active) {
+		this.active = active;
+	}
+
 	public Training() {
 	}
 

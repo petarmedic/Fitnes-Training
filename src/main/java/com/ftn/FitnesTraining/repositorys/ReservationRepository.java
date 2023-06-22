@@ -11,7 +11,6 @@ import java.util.List;
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation,Integer> {
     List<Reservation> findAllByUserId(int userId);
-
     @Query(value = "SELECT COUNT(*) FROM reservation as r WHERE r.confirmation=:confirmation AND r.training_schedule_id=:training_schedule_id" , nativeQuery = true)
     int numberReservation(@Param("confirmation") int confirmation, @Param("training_schedule_id") int training_schedule_id);
 }

@@ -36,4 +36,9 @@ public class ReservationController {
         return reservationService.processShoppingCart(accepted, principal.getName());
     }
 
+    @MutationMapping
+    @PreAuthorize("hasAuthority('USER') || hasAuthority('ADMIN') ")
+    public Boolean deleteReservation(@Argument int idReservation){
+        return reservationService.deleteReservation(idReservation);
+    }
 }
